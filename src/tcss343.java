@@ -1,0 +1,2 @@
+public class tcss343 {
+}
