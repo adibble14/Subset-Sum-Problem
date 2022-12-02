@@ -1,42 +1,55 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class tcss343 {
     public static void main(String[] args){
         int[] array = {2,3,5,7,9};
         int target = 13;
-        ArrayList output = new ArrayList();
-        output = CleverAlgorithm(array, target);
+        Object[][] solution = CleverAlgorithm(array, target);
 
-       /* Object[] solution = output.toArray();
-        if(solution[0] == "TRUE"){
-            int[] subset = (int[]) solution[1];
+        if(solution[0][0] == "TRUE"){
             System.out.print("A solution has been found!\nThe subset is: ");
-            System.out.println("{"+subset[0] + "," + subset[1] + "}");
+            System.out.print("{");
+            for(int i = 0; i<solution[1].length; i++){
+                System.out.print(solution[1][i]+",");
+            }
+            System.out.print("} for target number: "+target);
         }else{
             System.out.println("There is no subset in this set that adds up to " + target);
-        }*/
+        }
     }
 
     public static void BruteForce(){}
 
     public static void DynamicProgramming(){}
 
-    public static ArrayList CleverAlgorithm(int[] theArray, int theTarget){
+    public static Object[][] CleverAlgorithm(int[] theArray, int theTarget){
         double middle = Math.floor(theArray.length/2);
         int[] l = Arrays.copyOfRange(theArray, 0, (int) middle+1);
         int[] h = Arrays.copyOfRange(theArray, (int) middle +1, theArray.length);   //splitting the array into two parts of (nearly) equal size
 
-        ArrayList tableT = findAllSubsets(l, theTarget);       //returns all subsets of l that do not exceed theTarget
-        if(tableT.get(0)=="TRUE"){  //checking if the solution has been found
-           return tableT;
-        }
 
-        ArrayList tableW = findAllSubsets(h, theTarget);       //returns all subsets of h that do not exceed theTarget
-        if(tableW.get(0)=="TRUE"){  //checking if the solution has been found
+        Object[][] tableT = findAllSubsets(l, theTarget); //returns all subsets of l that do not exceed theTarget
+        if(tableT[0][0]=="TRUE"){  //checking if the solution has been found
+            return tableT;
+        }
+        Object[][] tableW = findAllSubsets(h, theTarget); //returns all subsets of h that do not exceed theTarget
+        if(tableW[0][0] == "TRUE"){  //checking if the solution has been found
             return tableW;
         }
+
+        Arrays.sort(tableW, new Comparator<Object[]>() {   //sorting the subsets by weight in ascending order
+            @Override
+            public int compare(Object[] o1, Object[] o2) {
+                if(getWeight(o1) > getWeight(o2)){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            }
+        });
 
 
 
@@ -46,13 +59,15 @@ public class tcss343 {
 
     /**
      * returns all subsets of theArray that do not exceed theTarget number
+     * or returns "TRUE" and the subset if a solution has been found
      */
     //used https://www.geeksforgeeks.org/power-set/ for the algorithm
-    public static ArrayList findAllSubsets(int[] theArray, int theTarget){
+    public static Object[][] findAllSubsets(int[] theArray, int theTarget){
 
         int numSubsets = (int)Math.pow(2, theArray.length)-1;
         ArrayList temp = new ArrayList(); //temporary list
-        ArrayList subsets = new ArrayList(); //list that contains all the subsets that do not exceed theTarget
+        Object[][] subsets = new Object[numSubsets][theArray.length];
+        //ArrayList subsets = new ArrayList(); //list that contains all the subsets that do not exceed theTarget
 
         for(int count = 1; count <= numSubsets; count++) {
             int total = 0;
@@ -62,22 +77,29 @@ public class tcss343 {
                     temp.add(theArray[j]);
                 }
             }
-                if(total == theTarget){   //if a correct subset has been found
-                    subsets.clear();
-                    subsets.add("TRUE");
-                    subsets.add(temp.toArray());
-                    return subsets;
-                } else if(total <= theTarget){
-                    subsets.add(temp.toArray());    //adding the subset to the array
-                }
-                temp.clear();
+            if(total == theTarget){   //if a correct subset has been found
+                Object[][] solution = {{"TRUE"}, temp.toArray()};
+                return solution;
+            } else if(total <= theTarget){
+                subsets[count-1] = temp.toArray();
+            }
+            temp.clear();
         }
 
         return subsets;
     }
+    public static int getWeight(Object[] theSublist){
+        int weight = 0;
+        for (Object num: theSublist) {
+            weight += (int) num;
+        }
+        return weight;
+    }
+
 
     public static void Driver(){}
 
 }
+
 
 
