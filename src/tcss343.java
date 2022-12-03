@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class tcss343 {
@@ -21,17 +22,12 @@ public class tcss343 {
         // Given false, t is greater than sum of set of S
         int t = 0;
         if (theV) {
-            // Alternate way
-//            final List<Integer> subS = s.subList(0,
-//                    1 + random.nextInt(s.size()));
-//            t = subS.stream().mapToInt(i -> i).sum();
-            final int subS = 1 + random.nextInt(s.size());
-            for (int i = 0; i < subS; i++) t += s.get(i);
+            final List<Integer> subS = (List<Integer>) s.clone();
+            final int subSize = random.nextInt(s.size() + 1);
+            for (int i = 0; i < subSize; i++) {
+                t += subS.remove(random.nextInt(subS.size()));
+            }
         }
         else t = s.stream().mapToInt(i -> i).sum() + 1;
-
-        // Quick debugging
-        System.out.println(s);
-        System.out.println(t);
     }
 }
