@@ -51,10 +51,24 @@ public class tcss343 {
             }
         });
 
-
-
-
-        return null;
+        //for each entry in tableT, see if a subset in W combined with the subset in T equals the target, if not there is no solution
+        for (Object[] subsetT: tableT) {
+            int weightT = getWeight(subsetT);
+            for (Object[] subsetW: tableW) {
+                int weightW = getWeight(subsetW);
+                if(weightT + weightW == theTarget){
+                    Object[] combinedSubset = new Object[subsetT.length + subsetW.length];
+                    System.arraycopy(subsetT, 0, combinedSubset, 0, subsetT.length);
+                    System.arraycopy(subsetW, 0, combinedSubset, subsetT.length, subsetW.length);
+                    Object[][] solution = {{"TRUE"}, combinedSubset};
+                    return solution;
+                }else if(weightT + weightW > theTarget){
+                    break;
+                }
+            }
+        }
+        Object[][] solution = {{"FALSE"}, {}};
+        return solution;
     }
 
     /**
@@ -82,6 +96,11 @@ public class tcss343 {
                 return solution;
             } else if(total <= theTarget){
                 subsets[count-1] = temp.toArray();
+            }else{
+                /**
+                 * add code to remove spot in the subsets array whenever a total is larger than the target to stop null pointers
+                 */
+
             }
             temp.clear();
         }
@@ -90,7 +109,14 @@ public class tcss343 {
     }
     public static int getWeight(Object[] theSublist){
         int weight = 0;
-        for (Object num: theSublist) {
+        /*try {
+            for (Object num : theSublist) {
+                weight += (int) num;
+            }
+        }catch (NullPointerException e){
+            return -1;
+        }*/
+        for (Object num : theSublist) {
             weight += (int) num;
         }
         return weight;
