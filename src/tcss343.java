@@ -1,3 +1,4 @@
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +13,7 @@ public class tcss343 {
 
     public static void BruteForce() {}
 
-    public static void dynamicProgramming(
+    public static ArrayList<Object> dynamicProgramming(
             final ArrayList<Integer> theS, final int theT) {
         boolean[][] a = new boolean[theS.size()][theT + 1];
         // first column
@@ -34,10 +35,28 @@ public class tcss343 {
 
         // TESTING
         printArray(a);
-        System.out.println("Is T possible with set S? " + a[a.length - 1][a[a.length - 1].length - 1]);
         System.out.println();
 
-        // TODO: Recover subset
+        // Recover subset
+        final ArrayList<Object> result = new ArrayList<>();
+        int i = a.length - 1;
+        if (theT > 0 && a[i][a[i].length - 1]) {
+            result.add(true);
+            int curr;
+            int t = theT;
+            while (t > 0) {
+                curr = theS.get(i--);
+                int bound = t - curr;
+                if (bound == 0 || (bound > 0 && a[i][bound])) {
+                    result.add(curr);
+                    t -= curr;
+                }
+            }
+        } else if (theT == 0) {
+            result.add(true);
+            result.add(0);
+        } else result.add(false);
+        return result;
     }
 
     public static void printArray(final boolean[][] theArray) {
@@ -56,10 +75,11 @@ public class tcss343 {
         final Random random = new Random();
         for (int i = 0; i < theN; i++) s.add(random.nextInt(theR) + 1);
         // TESTING
+//        s = new ArrayList<>(Arrays.asList(2, 3, 5, 7, 9));
+//        s = new ArrayList<>(Arrays.asList(9,7,5,3,2));
+//        s = new ArrayList<>(Arrays.asList(5, 1, 1, 1, 5));
         System.out.println(s);
 
-        // TESTING
-//        s = new ArrayList<>(Arrays.asList(2, 3, 5, 7, 9));
 
         // Given true, t is sum of random subset of S
         // Given false, t is greater than sum of set of S
@@ -77,10 +97,11 @@ public class tcss343 {
 
         // TESTING
 //        t = 12;
+//        t = 11;
 
         // TESTING
         System.out.println(t);
 
-        dynamicProgramming(s, t);
+        System.out.println(dynamicProgramming(s, t));
     }
 }
