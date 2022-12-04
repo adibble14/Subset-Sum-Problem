@@ -2,15 +2,15 @@ import java.util.*;
 
 public class tcss343 {
     public static void main(String[] args) {
-        Driver(11, 5, true);
-        Driver(6, 5, false);
+        Driver(5, 5, true);
+        Driver(5, 5, false);
     }
 
     public static boolean BruteForce(int[] seq, int target) {
         return BruteForce(seq, seq.length, target);
     }
 
-    public static boolean BruteForce(int[] seq, int n, int sum) {
+    private static boolean BruteForce(int[] seq, int n, int sum) {
         //Our base cases
         //Returns true if sum is equal to 0
         if (sum == 0) {
@@ -88,9 +88,9 @@ public class tcss343 {
             return result;
         }
 
-        int middle = theArray.length / 2;
-        int[] l = Arrays.copyOfRange(theArray, 0, middle + 1);
-        int[] h = Arrays.copyOfRange(theArray, middle + 1, theArray.length);   //splitting the array into two parts of (nearly) equal size
+        int middle = theArray.length / 2 + 1;
+        int[] l = Arrays.copyOfRange(theArray, 0, middle);
+        int[] h = Arrays.copyOfRange(theArray, middle, theArray.length);   //splitting the array into two parts of (nearly) equal size
 
         ArrayList<Object[]> tableT = findAllSubsets(l, theTarget); //returns all subsets of l that do not exceed theTarget
         if (!tableT.isEmpty()) { //making sure it isn't empty
@@ -114,13 +114,7 @@ public class tcss343 {
         if (!tableT.isEmpty() && !tableW.isEmpty()) {
 
             //sorting the subsets of tableW by weight in ascending order
-            tableW.sort((o1, o2) -> {
-                if (getWeight(o1) > getWeight(o2)) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            });
+            tableW.sort(Comparator.comparingInt(tcss343::getWeight));
 
             //for each entry in tableT, see if a subset in W combined with the subset in T equals the target, if not there is no solution
             for (Object[] subsetT : tableT) {
@@ -154,7 +148,7 @@ public class tcss343 {
     public static ArrayList<Object[]> findAllSubsets(int[] theArray, int theTarget) {
 
         int numSubsets = (int) Math.pow(2, theArray.length) - 1;
-        ArrayList temp = new ArrayList(); //temporary list
+        ArrayList<Integer> temp = new ArrayList<>(); //temporary list
         ArrayList<Object[]> subsets = new ArrayList<>(); //list that contains all the subsets that do not exceed theTarget
 
         for (int count = 1; count <= numSubsets; count++) {
