@@ -19,11 +19,10 @@ public class tcss343 {
 //            System.out.println("There is no subset in this set that adds up to " + target);
 //        }
         Driver(5, 5, true);
-        Driver(5, 5, false);
+        // Driver(5, 5, false);
     }
 
-    public static void BruteForce() {
-    }
+    public static void bruteForce() {}
 
     public static ArrayList<Object> dynamicProgramming(
             final ArrayList<Integer> theS, final int theT) {
@@ -71,7 +70,7 @@ public class tcss343 {
      * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
      * and the subset that adds up to the target (the empty set if False)
      */
-    public static ArrayList<Object[]> CleverAlgorithm(int[] theArray, int theTarget) {
+    public static ArrayList<Object[]> cleverAlgorithm(int[] theArray, int theTarget) {
 
         double middle = Math.floor(theArray.length / 2);
         int[] l = Arrays.copyOfRange(theArray, 0, (int) middle + 1);
@@ -205,11 +204,18 @@ public class tcss343 {
         System.out.println("Set: " + s);
         System.out.println("Target: " + t);
         System.out.println(dynamicProgramming(s, t));
-        System.out.println(CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t));
+//        ArrayList<Object[]> solution = cleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t);
+//        if (solution.get(0)[0] == "TRUE") {
+//            System.out.print("A solution has been found!\nThe subset is: ");
+//            System.out.print("{");
+//            for (int i = 0; i < solution.get(1).length; i++) {
+//                System.out.print(solution.get(1)[i] + ",");
+//            }
+//            System.out.print("} for target number: " + t);
+//        } else {
+//            System.out.println("There is no subset in this set that adds up " +
+//                    "to " + t);
+//        }
         System.out.println();
     }
-
 }
-
-
-
