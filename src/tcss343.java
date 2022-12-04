@@ -1,32 +1,67 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 public class tcss343 {
     public static void main(String[] args) {
-        int[] array = {2, 3, 5, 9, 7};
-        int target = 1;
-
-        ArrayList<Object[]> solution = CleverAlgorithm(array, target);  //calling the clever algorithm
-
-        //output
-        if (solution.get(0)[0] == "TRUE") {
-            System.out.print("A solution has been found!\nThe subset is: ");
-            System.out.print("{");
-            for (int i = 0; i < solution.get(1).length; i++) {
-                System.out.print(solution.get(1)[i] + ",");
-            }
-            System.out.print("} for target number: " + target);
-        } else {
-            System.out.println("There is no subset in this set that adds up to " + target);
-        }
+//        int[] array = {2, 3, 5, 9, 7};
+//        int target = 1;
+//
+//        ArrayList<Object[]> solution = CleverAlgorithm(array, target);  //calling the clever algorithm
+//
+//        //output
+//        if (solution.get(0)[0] == "TRUE") {
+//            System.out.print("A solution has been found!\nThe subset is: ");
+//            System.out.print("{");
+//            for (int i = 0; i < solution.get(1).length; i++) {
+//                System.out.print(solution.get(1)[i] + ",");
+//            }
+//            System.out.print("} for target number: " + target);
+//        } else {
+//            System.out.println("There is no subset in this set that adds up to " + target);
+//        }
+        Driver(5, 5, true);
+        Driver(5, 5, false);
     }
 
     public static void BruteForce() {
     }
 
-    public static void DynamicProgramming() {
+    public static ArrayList<Object> dynamicProgramming(
+            final ArrayList<Integer> theS, final int theT) {
+        final boolean[][] a = new boolean[theS.size()][theT + 1];
+        // first column
+        for (int i = 0; i < a.length; i++) a[i][0] = true;
+        // first row
+        for (int j = 1; j < a[0].length; j++) a[0][j] = theS.get(0) == j;
+        // rest of rows and columns
+        for (int i = 1; i < a.length; i++) {
+            for (int j = 1; j < a[i].length; j++) {
+                final int sI = theS.get(i);
+                final int prevRow = i - 1;
+                if (j < sI) a[i][j] = a[prevRow][j];
+                else a[i][j] = a[prevRow][j] || a[prevRow][j - sI];
+            }
+        }
+
+        // Recover subset
+        final ArrayList<Object> result = new ArrayList<>();
+        int i = a.length - 1;
+        if (theT > 0 && a[i][a[i].length - 1]) {
+            result.add(true);
+            int curr;
+            int t = theT;
+            while (t > 0) {
+                curr = theS.get(i--);
+                int bound = t - curr;
+                if (bound == 0 || (bound > 0 && a[i][bound])) {
+                    result.add(curr);
+                    t -= curr;
+                }
+            }
+        } else if (theT == 0) {
+            result.add(true);
+            result.add(0);
+        } else result.add(false);
+        return result;
     }
 
     /**
@@ -149,7 +184,30 @@ public class tcss343 {
         return weight;
     }
 
-    public static void Driver() {}
+    public static void Driver(final int theN, final int theR,
+                              final Boolean theV) {
+        // Create array of bounded random numbers
+        final ArrayList<Integer> s = new ArrayList<>();
+        final Random r = new Random();
+        for (int i = 0; i < theN; i++) s.add(r.nextInt(theR) + 1);
+
+        // Given true, t is sum of random subset of S
+        // Given false, t is greater than sum of set of S
+        int t = 0;
+        if (theV) {
+            final List<Integer> subS = (List<Integer>) s.clone();
+            final int subSize = r.nextInt(s.size() + 1);
+            for (int i = 0; i < subSize; i++)
+                t += subS.remove(r.nextInt(subS.size()));
+        }
+        else t = s.stream().mapToInt(i -> i).sum() + 1;
+
+        System.out.println("Set: " + s);
+        System.out.println("Target: " + t);
+        System.out.println(dynamicProgramming(s, t));
+        System.out.println(CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t));
+        System.out.println();
+    }
 
 }
 
