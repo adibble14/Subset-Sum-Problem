@@ -2,8 +2,8 @@ import java.util.*;
 
 public class tcss343 {
     public static void main(String[] args) {
-        Driver(5, 5, true);
-        Driver(5, 5, false);
+        Driver(11, 5, true);
+        Driver(6, 5, false);
     }
 
     public static boolean BruteForce(int[] seq, int target) {
@@ -88,9 +88,9 @@ public class tcss343 {
             return result;
         }
 
-        double middle = Math.floor((double) theArray.length / 2);
-        int[] l = Arrays.copyOfRange(theArray, 0, (int) middle + 1);
-        int[] h = Arrays.copyOfRange(theArray, (int) middle + 1, theArray.length);   //splitting the array into two parts of (nearly) equal size
+        int middle = theArray.length / 2;
+        int[] l = Arrays.copyOfRange(theArray, 0, middle + 1);
+        int[] h = Arrays.copyOfRange(theArray, middle + 1, theArray.length);   //splitting the array into two parts of (nearly) equal size
 
         ArrayList<Object[]> tableT = findAllSubsets(l, theTarget); //returns all subsets of l that do not exceed theTarget
         if (!tableT.isEmpty()) { //making sure it isn't empty
