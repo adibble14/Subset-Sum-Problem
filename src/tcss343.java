@@ -19,10 +19,11 @@ public class tcss343 {
 //            System.out.println("There is no subset in this set that adds up to " + target);
 //        }
         Driver(5, 5, true);
-        // Driver(5, 5, false);
+        //Driver(5, 5, false);
     }
 
-    public static void bruteForce() {}
+    public static void BruteForce() {
+    }
 
     public static ArrayList<Object> dynamicProgramming(
             final ArrayList<Integer> theS, final int theT) {
@@ -70,7 +71,14 @@ public class tcss343 {
      * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
      * and the subset that adds up to the target (the empty set if False)
      */
-    public static ArrayList<Object[]> cleverAlgorithm(int[] theArray, int theTarget) {
+    public static ArrayList<Object> CleverAlgorithm(int[] theArray, int theTarget) {
+
+        ArrayList<Object> result = new ArrayList<>();
+        if (theTarget == 0) {
+            result.add(true);
+            result.add(0);
+            return result;
+        }
 
         double middle = Math.floor(theArray.length / 2);
         int[] l = Arrays.copyOfRange(theArray, 0, (int) middle + 1);
@@ -80,14 +88,18 @@ public class tcss343 {
         ArrayList<Object[]> tableT = findAllSubsets(l, theTarget); //returns all subsets of l that do not exceed theTarget
         if (!tableT.isEmpty()) { //making sure it isn't empty
             if (tableT.get(0)[0] == "TRUE") {  //checking if the solution has been found
-                return tableT;
+                result.add(true);
+                result.addAll(Arrays.asList(tableT.get(1)));
+                return result;
             }
         }
 
         ArrayList<Object[]> tableW = findAllSubsets(h, theTarget); //returns all subsets of h that do not exceed theTarget
         if (!tableW.isEmpty()) { //making sure it isn't empty
             if (tableW.get(0)[0] == "TRUE") {  //checking if the solution has been found
-                return tableW;
+                result.add(true);
+                result.addAll(Arrays.asList(tableW.get(1)));
+                return result;
             }
         }
 
@@ -115,11 +127,14 @@ public class tcss343 {
                         System.arraycopy(subsetT, 0, combinedSubset, 0, subsetT.length);
                         System.arraycopy(subsetW, 0, combinedSubset, subsetT.length, subsetW.length);
                         //Object[][] solution = {{"TRUE"}, combinedSubset};
-                        ArrayList<Object[]> solution = new ArrayList<Object[]>();
-                        Object[] found = {"TRUE"};
-                        solution.add(found);
-                        solution.add(combinedSubset);
-                        return solution;
+//                        ArrayList<Object[]> solution = new ArrayList<Object[]>();
+//                        Object[] found = {"TRUE"};
+//                        solution.add(found);
+//                        solution.add(combinedSubset);
+//                        return solution;
+                        result.add(true);
+                        result.addAll(Arrays.asList(combinedSubset));
+                        return result;
                     } else if (weightT + weightW > theTarget) {
                         break;
                     }
@@ -128,12 +143,13 @@ public class tcss343 {
         }
 
         //output for no solution (FALSE and the empty subset)
-        ArrayList<Object[]> solution = new ArrayList<Object[]>();
-        Object[] answer = {"FALSE"};
-        solution.add(answer);
-        Object[] emptySubset = {};
-        solution.add(emptySubset);
-        return solution;
+//        ArrayList<Object[]> solution = new ArrayList<Object[]>();
+//        Object[] answer = {"FALSE"};
+//        solution.add(answer);
+//        Object[] emptySubset = {};
+//        solution.add(emptySubset);
+        result.add(false);
+        return result;
     }
 
     /**
@@ -186,7 +202,7 @@ public class tcss343 {
     public static void Driver(final int theN, final int theR,
                               final Boolean theV) {
         // Create array of bounded random numbers
-        final ArrayList<Integer> s = new ArrayList<>();
+        ArrayList<Integer> s = new ArrayList<>();
         final Random r = new Random();
         for (int i = 0; i < theN; i++) s.add(r.nextInt(theR) + 1);
 
@@ -201,10 +217,17 @@ public class tcss343 {
         }
         else t = s.stream().mapToInt(i -> i).sum() + 1;
 
+//        s = new ArrayList<>(Arrays.asList(1, 4, 5, 1, 3));
+//        t = 5;
+
         System.out.println("Set: " + s);
         System.out.println("Target: " + t);
         System.out.println(dynamicProgramming(s, t));
-//        ArrayList<Object[]> solution = cleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t);
+        System.out.println(CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t));
+
+//        System.out.println(CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t));
+//        ArrayList<Object[]> solution =
+//                CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t);
 //        if (solution.get(0)[0] == "TRUE") {
 //            System.out.print("A solution has been found!\nThe subset is: ");
 //            System.out.print("{");
@@ -218,4 +241,5 @@ public class tcss343 {
 //        }
         System.out.println();
     }
+
 }
