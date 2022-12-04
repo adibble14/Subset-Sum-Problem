@@ -2,22 +2,6 @@ import java.util.*;
 
 public class tcss343 {
     public static void main(String[] args) {
-//        int[] array = {2, 3, 5, 9, 7};
-//        int target = 1;
-//
-//        ArrayList<Object[]> solution = CleverAlgorithm(array, target);  //calling the clever algorithm
-//
-//        //output
-//        if (solution.get(0)[0] == "TRUE") {
-//            System.out.print("A solution has been found!\nThe subset is: ");
-//            System.out.print("{");
-//            for (int i = 0; i < solution.get(1).length; i++) {
-//                System.out.print(solution.get(1)[i] + ",");
-//            }
-//            System.out.print("} for target number: " + target);
-//        } else {
-//            System.out.println("There is no subset in this set that adds up to " + target);
-//        }
         Driver(5, 5, true);
         Driver(5, 5, false);
     }
@@ -223,11 +207,15 @@ public class tcss343 {
         System.out.println("Set: " + s);
         System.out.println("Target: " + t);
         System.out.println(dynamicProgramming(s, t));
-        System.out.println(CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t));
-        System.out.println();
+        ArrayList<Object[]> solution = CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t);
+        if (solution.get(0)[0] == "TRUE") {
+            System.out.print("[true, ");
+            System.out.print(solution.get(1)[0]);
+            for (int i = 1; i < solution.get(1).length; i++) {
+                System.out.print(", " + solution.get(1)[i]);
+            }
+            System.out.println("]");
+        } else System.out.println("[false]");
+        System.out.println("\n");
     }
-
 }
-
-
-
