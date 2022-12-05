@@ -34,48 +34,55 @@ public class tcss343 {
         return BruteForce(seq, n - 1, sum, result) || BruteForce(seq, n - 1, sum - seq[n - 1], result);
     }
 
-    public static ArrayList<Object> dynamicProgramming(
-            final int[] theS, final int theT) {
-        final boolean[][] a = new boolean[theS.length][theT + 1];
-        // first column
-        for (int i = 0; i < a.length; i++) a[i][0] = true;
-        // first row
-        for (int j = 1; j < a[0].length; j++) a[0][j] = theS[0] == j;
-        // rest of rows and columns
-        for (int i = 1; i < a.length; i++) {
-            for (int j = 1; j < a[i].length; j++) {
-                final int sI = theS[i];
-                final int prevRow = i - 1;
-                if (j < sI) a[i][j] = a[prevRow][j];
-                else a[i][j] = a[prevRow][j] || a[prevRow][j - sI];
-            }
-        }
-
-        // Recover subset
+    public static ArrayList<Object> dynamicProgramming(final int[] theS,
+                                                       final int theT) {
         final ArrayList<Object> result = new ArrayList<>();
-        int i = a.length - 1;
-        if (theT > 0 && a[i][a[i].length - 1]) {
-            result.add(true);
-            int curr;
-            int t = theT;
-            while (t > 0) {
-                curr = theS[i--];
-                int bound = t - curr;
-                if (bound == 0 || (bound > 0 && a[i][bound])) {
-                    result.add(curr);
-                    t -= curr;
+        result.add(false);
+        if (theT == 0) { // quick checks for target before applying actual algo
+            result.set(0, true);
+            result.add(0);
+        } else { // more efficient overall (is this allowed?)
+            final int total = Arrays.stream(theS).sum();
+            if (total == theT) {
+                result.set(0, true);
+                for (int i: theS) result.add(i);
+            } else if (total > theT) {
+                final boolean[][] a = new boolean[theS.length][theT + 1];
+                // first column
+                for (int i = 0; i < a.length; i++) a[i][0] = true;
+                // first row
+                for (int j = 1; j < a[0].length; j++) a[0][j] = theS[0] == j;
+                // rest of rows and columns
+                for (int i = 1; i < a.length; i++) {
+                    for (int j = 1; j < a[i].length; j++) {
+                        final int sI = theS[i];
+                        final int prevRow = i - 1;
+                        if (j < sI) a[i][j] = a[prevRow][j];
+                        else a[i][j] = a[prevRow][j] || a[prevRow][j - sI];
+                    }
+                }
+                // Recover subset
+                int i = a.length - 1;
+                if (a[i][a[i].length - 1]) {
+                    result.set(0, true);
+                    int curr, t = theT;
+                    while (t > 0) {
+                        curr = theS[i--];
+                        final int bound = t - curr;
+                        if (bound == 0 || (bound > 0 && a[i][bound])) {
+                            result.add(curr);
+                            t -= curr;
+                        }
+                    }
                 }
             }
-        } else if (theT == 0) {
-            result.add(true);
-            result.add(0);
-        } else result.add(false);
+        }
         return result;
     }
 
     /**
      * A clever algorithm for solving the Subset Sum Problem
-//     * @param theArray the array of integers in the list
+     * @param theArray the array of integers in the list
      * @param theTarget the target number used for the sum
      * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
      * and the subset that adds up to the target (the empty set if False)
@@ -148,9 +155,9 @@ public class tcss343 {
      * or returns "TRUE" and the subset if a solution has been found
      */
     //used https://www.geeksforgeeks.org/power-set/ for the algorithm
-    public static ArrayList<Object[]> findAllSubsets(int[] theArray, int theTarget) {
-
-        int numSubsets = (int) Math.pow(2, theArray.length) - 1;
+    public static ArrayList<Object[]> findAllSubsets(int[] theArray,
+                                                     int theTarget) {
+        double numSubsets = Math.pow(2, theArray.length) - 1;
         ArrayList<Integer> temp = new ArrayList<>(); //temporary list
         ArrayList<Object[]> subsets = new ArrayList<>(); //list that contains all the subsets that do not exceed theTarget
 
@@ -164,8 +171,7 @@ public class tcss343 {
             }
             if (total == theTarget) {   //if a correct subset has been found
                 subsets.clear();
-                Object[] found = {"TRUE"};
-                subsets.add(found);
+                subsets.add(new Object[]{"TRUE"});
                 subsets.add(temp.toArray());
                 return subsets;
             } else if (total <= theTarget) {
@@ -193,31 +199,30 @@ public class tcss343 {
     public static void Driver(final int theN, final int theR,
                               final Boolean theV) {
         // Create array of bounded random numbers
-        /*final*/ ArrayList<Integer> s = new ArrayList<>();
         final Random r = new Random();
-        for (int i = 0; i < theN; i++) s.add(r.nextInt(theR) + 1);
+        final int[] s = new int[theN];
+        for (int i = 0; i < s.length; i++) s[i] = r.nextInt(theR) + 1;
 
         // Given true, t is sum of random subset of S
         // Given false, t is greater than sum of set of S
         int t = 0;
         if (theV) {
-            final List<Integer> subS = (List<Integer>) s.clone();
-            final int subSize = r.nextInt(s.size() + 1);
+            final ArrayList<Integer> subS = new ArrayList<>();
+            for (int i : s) subS.add(i);
+            final int subSize = r.nextInt(s.length + 1);
             for (int i = 0; i < subSize; i++)
                 t += subS.remove(r.nextInt(subS.size()));
-        }
-        else t = s.stream().mapToInt(i -> i).sum() + 1;
+        } else t = Arrays.stream(s).sum() + 1;
 
-//        s = new ArrayList<>(Arrays.asList(1, 4, 5, 1, 3));
-//        t = 5;
+        // Testing
+//        s = new int[]{2,3};
+//        t = 1;
 
-        final int[] s2 =  s.stream().mapToInt(Integer::intValue).toArray();
-
-        System.out.println("Set: " + s);
+        System.out.println("Set: " + Arrays.toString(s));
         System.out.println("Target: " + t);
-        System.out.println(BruteForce(s2, t));
-        System.out.println(dynamicProgramming(s2, t));
-        System.out.println(CleverAlgorithm(s2, t));
+        System.out.println(BruteForce(s, t));
+        System.out.println(dynamicProgramming(s, t));
+        System.out.println(CleverAlgorithm(s, t));
         System.out.println();
     }
 }
