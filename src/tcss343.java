@@ -6,7 +6,11 @@ public class tcss343 {
         Driver(5, 5, false);
     }
 
-    public static boolean BruteForce(int[] target, int n, int sum) {
+    public static boolean BruteForce(int[] seq, int target) {
+        return BruteForce(seq, seq.length, target);
+    }
+
+    private static boolean BruteForce(int[] seq, int n, int sum) {
         //Our base cases
         //Returns true if sum is equal to 0
         if (sum == 0) {
@@ -18,26 +22,26 @@ public class tcss343 {
         }
         //Determining if our last element is greater than our sum
         //and if so ignoring it
-        if (target[n - 1] > sum) {
-            return BruteForce(target, n - 1, sum);
+        if (seq[n - 1] > sum) {
+            return BruteForce(seq, n - 1, sum);
         }
         //Else check if sum can be obtained by
         //Including last element
         //Excluding last element
-        return BruteForce(target, n - 1, sum) || BruteForce(target, n - 1, sum - target[n - 1]);
+        return BruteForce(seq, n - 1, sum) || BruteForce(seq, n - 1, sum - seq[n - 1]);
     }
 
     public static ArrayList<Object> dynamicProgramming(
-            final ArrayList<Integer> theS, final int theT) {
-        final boolean[][] a = new boolean[theS.size()][theT + 1];
+            final int[] theS, final int theT) {
+        final boolean[][] a = new boolean[theS.length][theT + 1];
         // first column
         for (int i = 0; i < a.length; i++) a[i][0] = true;
         // first row
-        for (int j = 1; j < a[0].length; j++) a[0][j] = theS.get(0) == j;
+        for (int j = 1; j < a[0].length; j++) a[0][j] = theS[0] == j;
         // rest of rows and columns
         for (int i = 1; i < a.length; i++) {
             for (int j = 1; j < a[i].length; j++) {
-                final int sI = theS.get(i);
+                final int sI = theS[i];
                 final int prevRow = i - 1;
                 if (j < sI) a[i][j] = a[prevRow][j];
                 else a[i][j] = a[prevRow][j] || a[prevRow][j - sI];
@@ -52,7 +56,7 @@ public class tcss343 {
             int curr;
             int t = theT;
             while (t > 0) {
-                curr = theS.get(i--);
+                curr = theS[i--];
                 int bound = t - curr;
                 if (bound == 0 || (bound > 0 && a[i][bound])) {
                     result.add(curr);
@@ -68,45 +72,49 @@ public class tcss343 {
 
     /**
      * A clever algorithm for solving the Subset Sum Problem
-     * @param theArray the array of integers in the list
+     //     * @param theArray the array of integers in the list
      * @param theTarget the target number used for the sum
      * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
      * and the subset that adds up to the target (the empty set if False)
      */
-    public static ArrayList<Object[]> CleverAlgorithm(int[] theArray, int theTarget) {
+    public static ArrayList<Object> CleverAlgorithm(int[] theArray,
+                                                    int theTarget) {
 
-        double middle = Math.floor(theArray.length / 2);
-        int[] l = Arrays.copyOfRange(theArray, 0, (int) middle + 1);
-        int[] h = Arrays.copyOfRange(theArray, (int) middle + 1, theArray.length);   //splitting the array into two parts of (nearly) equal size
+        ArrayList<Object> result = new ArrayList<>();
+        //output for the empty subset
+        if (theTarget == 0) {
+            result.add(true);
+            result.add(0);
+            return result;
+        }
 
+        int middle = theArray.length / 2 + 1;
+        int[] l = Arrays.copyOfRange(theArray, 0, middle);
+        int[] h = Arrays.copyOfRange(theArray, middle, theArray.length);   //splitting the array into two parts of (nearly) equal size
 
         ArrayList<Object[]> tableT = findAllSubsets(l, theTarget); //returns all subsets of l that do not exceed theTarget
         if (!tableT.isEmpty()) { //making sure it isn't empty
             if (tableT.get(0)[0] == "TRUE") {  //checking if the solution has been found
-                return tableT;
+                result.add(true);
+                result.addAll(Arrays.asList(tableT.get(1)));
+                return result;
             }
         }
 
         ArrayList<Object[]> tableW = findAllSubsets(h, theTarget); //returns all subsets of h that do not exceed theTarget
         if (!tableW.isEmpty()) { //making sure it isn't empty
             if (tableW.get(0)[0] == "TRUE") {  //checking if the solution has been found
-                return tableW;
+                result.add(true);
+                result.addAll(Arrays.asList(tableW.get(1)));
+                return result;
             }
         }
 
         //if there are at least one possible subset in each table
         if (!tableT.isEmpty() && !tableW.isEmpty()) {
 
-            Collections.sort(tableW, new Comparator<Object[]>() {   //sorting the subsets of tableW by weight in ascending order
-                @Override
-                public int compare(Object[] o1, Object[] o2) {
-                    if (getWeight(o1) > getWeight(o2)) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-            });
+            //sorting the subsets of tableW by weight in ascending order
+            tableW.sort(Comparator.comparingInt(tcss343::getWeight));
 
             //for each entry in tableT, see if a subset in W combined with the subset in T equals the target, if not there is no solution
             for (Object[] subsetT : tableT) {
@@ -117,12 +125,9 @@ public class tcss343 {
                         Object[] combinedSubset = new Object[subsetT.length + subsetW.length];
                         System.arraycopy(subsetT, 0, combinedSubset, 0, subsetT.length);
                         System.arraycopy(subsetW, 0, combinedSubset, subsetT.length, subsetW.length);
-                        //Object[][] solution = {{"TRUE"}, combinedSubset};
-                        ArrayList<Object[]> solution = new ArrayList<Object[]>();
-                        Object[] found = {"TRUE"};
-                        solution.add(found);
-                        solution.add(combinedSubset);
-                        return solution;
+                        result.add(true);
+                        result.addAll(Arrays.asList(combinedSubset));
+                        return result;
                     } else if (weightT + weightW > theTarget) {
                         break;
                     }
@@ -130,13 +135,9 @@ public class tcss343 {
             }
         }
 
-        //output for no solution (FALSE and the empty subset)
-        ArrayList<Object[]> solution = new ArrayList<Object[]>();
-        Object[] answer = {"FALSE"};
-        solution.add(answer);
-        Object[] emptySubset = {};
-        solution.add(emptySubset);
-        return solution;
+        //output for no solution (FALSE)
+        result.add(false);
+        return result;
     }
 
     /**
@@ -147,8 +148,8 @@ public class tcss343 {
     public static ArrayList<Object[]> findAllSubsets(int[] theArray, int theTarget) {
 
         int numSubsets = (int) Math.pow(2, theArray.length) - 1;
-        ArrayList temp = new ArrayList(); //temporary list
-        ArrayList<Object[]> subsets = new ArrayList<Object[]>(); //list that contains all the subsets that do not exceed theTarget
+        ArrayList<Integer> temp = new ArrayList<>(); //temporary list
+        ArrayList<Object[]> subsets = new ArrayList<>(); //list that contains all the subsets that do not exceed theTarget
 
         for (int count = 1; count <= numSubsets; count++) {
             int total = 0;
@@ -204,18 +205,13 @@ public class tcss343 {
         }
         else t = s.stream().mapToInt(i -> i).sum() + 1;
 
+        final int[] s2 =  s.stream().mapToInt(Integer::intValue).toArray();
+
         System.out.println("Set: " + s);
         System.out.println("Target: " + t);
-        System.out.println(dynamicProgramming(s, t));
-        ArrayList<Object[]> solution = CleverAlgorithm(s.stream().mapToInt(i -> i).toArray(), t);
-        if (solution.get(0)[0] == "TRUE") {
-            System.out.print("[true, ");
-            System.out.print(solution.get(1)[0]);
-            for (int i = 1; i < solution.get(1).length; i++) {
-                System.out.print(", " + solution.get(1)[i]);
-            }
-            System.out.println("]");
-        } else System.out.println("[false]");
-        System.out.println("\n");
+        System.out.println(BruteForce(s2, t));
+        System.out.println(dynamicProgramming(s2, t));
+        System.out.println(CleverAlgorithm(s2, t));
+        System.out.println();
     }
 }
