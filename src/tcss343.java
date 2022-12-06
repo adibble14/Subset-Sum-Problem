@@ -3,8 +3,8 @@ import java.util.*;
 public class tcss343 {
     public static void main(String[] args) {
         // Warning: r >= n only else infinite
-        Driver(10, 15, true);
-        Driver(10, 15, false);
+        Driver(20, 30, true);
+        Driver(20, 30, false);
     }
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
@@ -28,16 +28,10 @@ public class tcss343 {
                 else choice[j] = Character.getNumericValue(bin.charAt(l--));
             }
             int sum = 0;
-            for (int k = 0; k < n; k++) {
-                sum += choice[k] * s[k];
-            }
+            for (int k = 0; k < n; k++) sum += choice[k] * s[k];
             if (sum == t) {
                 found = true;
-                for (int j = 0; j < choice.length; j++) {
-                    if (choice[j] == 1) {
-                        ss.add(s[j]);
-                    }
-                }
+                for (int j = 0; j < choice.length; j++) if (choice[j] == 1) ss.add(s[j]);
                 break;
             }
         }
@@ -91,7 +85,7 @@ public class tcss343 {
 //        return select || reject;
 //    }
 
-    public static ArrayList<Object> dynamicProgramming(final int[] theS,
+    public static ArrayList<Object> DynamicProgramming(final int[] theS,
                                                        final int theT) {
         final boolean[][] a = new boolean[theS.length][theT + 1];
         // first column
@@ -257,9 +251,6 @@ public class tcss343 {
 //        s = new int[]{3,4,5,2};
 //        t = 9;
 
-//        s = new int[]{5, 4, 1, 3, 2};
-//        t = 14;
-
         System.out.println("Set: " + Arrays.toString(s) + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
 
         long start = System.currentTimeMillis();
@@ -269,7 +260,7 @@ public class tcss343 {
         System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
 
         long start2 = System.currentTimeMillis();
-        ArrayList<Object> dynamicProgramming = dynamicProgramming(s, t);
+        ArrayList<Object> dynamicProgramming = DynamicProgramming(s, t);
         long end2 = System.currentTimeMillis();
         System.out.println(dynamicProgramming);
         System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
