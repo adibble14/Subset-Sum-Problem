@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class tcss343 {
@@ -10,32 +11,52 @@ public class tcss343 {
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
         ArrayList<Object> result = new ArrayList<>();
         ArrayList<Integer> subset = new ArrayList<>();
-        result.add(0, BruteForce(seq, seq.length, target, subset));
+        BruteForce(result, seq, seq.length, target, subset);
         result.add(subset);
         return result;
     }
 
-    private static boolean BruteForce(int[] seq, int n, int sum,
+    /*private static boolean BruteForce(int[] seq, int n, int target,
                                       ArrayList<Integer> s) {
         //Our base cases
-        //Returns true if sum is equal to 0
-        if (sum == 0) {
+        //Returns true if target is equal to 0
+        if (target == 0) {
             return true;
         }
         //Returns true if n is equal to 0
         if (n == 0) {
             return false;
         }
-        //Determining if our last element is greater than our sum
+        //Determining if our last element is greater than our target
         //and if so ignoring it
-        if (seq[n - 1] > sum) {
-            return BruteForce(seq, n - 1, sum, s);
+        if (seq[n - 1] > target) {
+            return BruteForce(seq, n - 1, target, s);
         }
-        //Else check if sum can be obtained by
+        //Else check if target can be obtained by
         //Including last element
         //Excluding last element
-        return BruteForce(seq, n - 1, sum, s) ||
-                BruteForce(seq, n - 1, sum - seq[n - 1], s);
+       /return BruteForce(seq, n - 1, target, s) ||
+                BruteForce(seq, n - 1, target - seq[n - 1], s);
+    }*/
+
+    private static ArrayList<Object> BruteForce(ArrayList<Object> result, int[] seq, int n, int target,
+                                                ArrayList<Integer> subset) {
+        if(target == 0){
+            result.add(true);
+            return result;
+        }
+
+        if(n==0){
+            result.add(false);
+            return result;
+        }
+
+        if (seq[n - 1] > target) {
+            return BruteForce(result, seq, n - 1, target, subset);
+        }
+
+        subset.add(seq[n-1]);
+        return BruteForce(result, seq, n - 1, target - seq[n - 1], subset);
     }
 
     public static ArrayList<Object> dynamicProgramming(final int[] theS,
@@ -201,16 +222,20 @@ public class tcss343 {
                 t += subS.remove(r.nextInt(subS.size()));
         } else t = Arrays.stream(s).sum() + 1;
 
-        Arrays.sort(s);
+        Arrays.sort(s);  //sorting the elements
 
         //output
         System.out.println("Set: " + Arrays.toString(s) + "  Target (t): " + t + "  Number of Elements (n): " + theN + "  Range of Values: 1-"+theR);System.out.println();
 
         char theta = '\u0398';
         long start = System.currentTimeMillis();
-        ArrayList<Object> bruteForce = BruteForce(s, t);
+        //ArrayList<Object> bruteForce = BruteForce(s, t);
+        int[] test = {2,7,8,9,10};
+        ArrayList<Object> bruteForce = BruteForce(test, 20);
         long end = System.currentTimeMillis();
-        System.out.println("Brute Force:");System.out.println(bruteForce);
+        System.out.println("Brute Force:");
+        System.out.println(bruteForce);
+
         System.out.print("Execution time in milliseconds: ");System.out.print(end-start + ",");
         System.out.println("  Table space: " + theta+"(n)");System.out.println();
 
