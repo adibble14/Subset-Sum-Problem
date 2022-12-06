@@ -215,10 +215,6 @@ public class tcss343 {
 
         System.out.println("Set: " + s + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
 
-        /*System.out.println(BruteForce(s2, t));
-        System.out.println(dynamicProgramming(s2, t));
-        System.out.println(CleverAlgorithm(s2, t));*/
-
         long start = System.currentTimeMillis();
         boolean bruteForce = BruteForce(s2, t);
         long end = System.currentTimeMillis();
