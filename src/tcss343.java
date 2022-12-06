@@ -7,11 +7,14 @@ public class tcss343 {
         Driver(5, 15, false);
     }
 
-    public static boolean BruteForce(int[] seq, int target) {
-        return BruteForce(seq, seq.length, target);
+    public static ArrayList<Object> BruteForce(int[] seq, int target) {
+        ArrayList<Object> result = new ArrayList<>();
+        result.add(0, BruteForce(seq, seq.length, target, result));
+        return result;
     }
 
-    private static boolean BruteForce(int[] seq, int n, int sum) {
+    private static boolean BruteForce(int[] seq, int n, int sum,
+                                      ArrayList<Object> r) {
         //Our base cases
         //Returns true if sum is equal to 0
         if (sum == 0) {
@@ -24,12 +27,13 @@ public class tcss343 {
         //Determining if our last element is greater than our sum
         //and if so ignoring it
         if (seq[n - 1] > sum) {
-            return BruteForce(seq, n - 1, sum);
+            return BruteForce(seq, n - 1, sum, r);
         }
         //Else check if sum can be obtained by
         //Including last element
         //Excluding last element
-        return BruteForce(seq, n - 1, sum) || BruteForce(seq, n - 1, sum - seq[n - 1]);
+        return BruteForce(seq, n - 1, sum, r) ||
+                BruteForce(seq, n - 1, sum - seq[n - 1], r);
     }
 
     public static ArrayList<Object> dynamicProgramming(final int[] theS,
@@ -99,10 +103,6 @@ public class tcss343 {
         //if there are at least one possible subset in each table
         if (!tableT.isEmpty() && !tableW.isEmpty()) {
 
-//            List<ArrayList<Integer>> t = new ArrayList<>(tableT.stream().map(object -> (ArrayList<Integer>) object).toList());
-//
-//            List<ArrayList<Integer>> w = new ArrayList<>(tableW.stream().map(object -> (ArrayList<Integer>) object).toList());
-
             //sorting the subsets of tableW by weight in ascending order
             tableW.sort(Comparator.comparingInt(tcss343::getWeight));
 
@@ -122,25 +122,6 @@ public class tcss343 {
                     }
                 }
             }
-//            //sorting the subsets of tableW by weight in ascending order
-//            w.sort(Comparator.comparingInt(tcss343::getWeight));
-//
-//            //for each entry in tableT, see if a subset in W combined with the subset in T equals the target, if not there is no solution
-//            for (ArrayList<Integer> subsetT : t) {
-//                int weightT = getWeight(subsetT);
-//                for (ArrayList<Integer> subsetW : w) {
-//                    int weightW = getWeight(subsetW);
-//                    if (weightT + weightW == theTarget) {
-//                        ArrayList<Integer> combinedSubset = new ArrayList<>(subsetT);
-//                        combinedSubset.addAll(subsetW);
-//                        result.add(true);
-//                        result.add(combinedSubset);
-//                        return result;
-//                    } else if (weightT + weightW > theTarget) {
-//                        break;
-//                    }
-//                }
-//            }
         }
 
         if (theTarget == 0) result.add(true);
@@ -186,10 +167,9 @@ public class tcss343 {
     /**
      * returns the weight of the sublist given
      */
-    public static int getWeight(Object /*ArrayList<Integer>*/ theSubset) {
+    public static int getWeight(Object theSubset) {
         ArrayList<Integer> subset = (ArrayList<Integer>) theSubset;
         return subset.stream().mapToInt(i -> i).sum();
-//        return theSubset.stream().mapToInt(i -> i).sum();
     }
 
     /**
@@ -221,38 +201,22 @@ public class tcss343 {
 
         System.out.println("Set: " + Arrays.toString(s) + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
 
-        Runtime runtime = Runtime.getRuntime();
-        runtime.gc();
-
-        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         long start = System.currentTimeMillis();
-        boolean bruteForce = BruteForce(s, t);
+        ArrayList<Object> bruteForce = BruteForce(s, t);
         long end = System.currentTimeMillis();
-        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(bruteForce);
-//        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
         System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
 
-        runtime.gc();
-
-        usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         long start2 = System.currentTimeMillis();
         ArrayList<Object> dynamicProgramming = dynamicProgramming(s, t);
         long end2 = System.currentTimeMillis();
-        usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(dynamicProgramming);
-//        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
         System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
 
-        runtime.gc();
-
-        usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         long start3 = System.currentTimeMillis();
         ArrayList<Object> cleverAlgorithm = CleverAlgorithm(s, t);
         long end3 = System.currentTimeMillis();
-        usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(cleverAlgorithm);
-//        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
         System.out.print("Execution time in milliseconds: ");System.out.println(end3-start3);
 
         System.out.println();
