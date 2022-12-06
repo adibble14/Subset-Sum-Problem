@@ -2,8 +2,9 @@ import java.util.*;
 
 public class tcss343 {
     public static void main(String[] args) {
-        Driver(5, 5, true);
-        Driver(5, 5, false);
+        // Warning: r >= n only else infinite
+        Driver(5, 15, true);
+        Driver(5, 15, false);
     }
 
     public static boolean BruteForce(int[] seq, int target) {
@@ -49,9 +50,9 @@ public class tcss343 {
         }
         // Recover subset
         final ArrayList<Object> result = new ArrayList<>();
-        final ArrayList<Integer> subset = new ArrayList<>();
         int i = a.length - 1;
         if (theT > 0 && a[i][a[i].length - 1]) {
+            final ArrayList<Integer> subset = new ArrayList<>();
             result.add(true);
             int curr;
             int t = theT;
@@ -202,10 +203,10 @@ public class tcss343 {
         // Create array of bounded random numbers, no repeats
         final Random r = new Random();
         final int[] s = new int[theN];
-        for (int i = 0; i < s.length; i++) {
-            s[i] = r.nextInt(theR) + 1;
-        }
-        //adding n random elements to s within the range of 1 to r
+        final Set<Integer> d = new HashSet<>();
+        while (d.size() < theN) d.add(r.nextInt(theR) + 1); // prevent dupes
+        int y = 0;
+        for (Integer x : d) s[y++] = x;
 
         // Given true, t is sum of random subset of S
         // Given false, t is greater than sum of set of S
