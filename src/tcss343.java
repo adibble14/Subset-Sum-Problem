@@ -3,39 +3,39 @@ import java.util.*;
 public class tcss343 {
     public static void main(String[] args) {
         // Warning: r >= n only else infinite
-        Driver(5, 15, true);
-        Driver(5, 15, false);
+        Driver(5, 10, true);
+        Driver(5, 10, false);
     }
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
-        ArrayList<Object> result = new ArrayList<>();
-        ArrayList<Integer> subset = new ArrayList<>();
-        result.add(0, BruteForce(seq, seq.length, target, subset));
+        final ArrayList<Object> result = new ArrayList<>();
+        final ArrayList<Integer> subset = new ArrayList<>();
+        result.add(BruteForce(seq, seq.length - 1, target, subset));
         result.add(subset);
         return result;
     }
 
-    private static boolean BruteForce(int[] seq, int n, int sum,
-                                      ArrayList<Integer> s) {
+    private static boolean BruteForce(int[] s, int n, int t,
+                                      ArrayList<Integer> ss) {
         //Our base cases
-        //Returns true if sum is equal to 0
-        if (sum == 0) {
+        //Returns true if target is equal to 0
+        if (t == 0) {
             return true;
         }
         //Returns true if n is equal to 0
         if (n == 0) {
             return false;
         }
-        //Determining if our last element is greater than our sum
+        //Determining if our last element is greater than our target
         //and if so ignoring it
-        if (seq[n - 1] > sum) {
-            return BruteForce(seq, n - 1, sum, s);
+        if (s[n - 1] > t) {
+            return BruteForce(s, n - 1, t, ss);
         }
-        //Else check if sum can be obtained by
+        //Else check if target can be obtained by
         //Including last element
         //Excluding last element
-        return BruteForce(seq, n - 1, sum, s) ||
-                BruteForce(seq, n - 1, sum - seq[n - 1], s);
+        return BruteForce(s, n - 1, t, ss) ||
+                BruteForce(s, n - 1, t - s[n - 1], ss);
     }
 
     public static ArrayList<Object> dynamicProgramming(final int[] theS,
@@ -57,7 +57,7 @@ public class tcss343 {
         // Recover subset
         final ArrayList<Object> result = new ArrayList<>();
         int i = a.length - 1;
-        if (/*theT > 0 && */a[i][a[i].length - 1]) {
+        if (a[i][a[i].length - 1]) {
             final ArrayList<Integer> subset = new ArrayList<>();
             result.add(true);
             int curr;
@@ -184,8 +184,9 @@ public class tcss343 {
                               final Boolean theV) {
         // Create array of bounded random numbers, no repeats
         final Random r = new Random();
-        final int[] s = new int[theN];
-        final Set<Integer> d = new HashSet<>();
+        /*final*/ int[] s = new int[theN];
+
+        final Set<Integer> d = new LinkedHashSet<>();
         while (d.size() < theN) d.add(r.nextInt(theR) + 1); // prevent dupes
         int y = 0;
         for (Integer x : d) s[y++] = x;
@@ -194,12 +195,14 @@ public class tcss343 {
         // Given false, t is greater than sum of set of S
         int t = 0;
         if (theV) {
-            final ArrayList<Integer> subS = new ArrayList<>();
-            for (int i : s) subS.add(i);
+            final ArrayList<Integer> subS = new ArrayList<>(d);
             final int subSize = r.nextInt(s.length + 1);
             for (int i = 0; i < subSize; i++)
                 t += subS.remove(r.nextInt(subS.size()));
         } else t = Arrays.stream(s).sum() + 1;
+
+//        s = new int[]{9, 3, 6, 2, 5};
+//        t = 25;
 
         System.out.println("Set: " + Arrays.toString(s) + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
 
