@@ -3,40 +3,93 @@ import java.util.*;
 public class tcss343 {
     public static void main(String[] args) {
         // Warning: r >= n only else infinite
-        Driver(5, 10, true);
-        Driver(5, 10, false);
+        Driver(10, 15, true);
+        Driver(10, 15, false);
     }
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
         final ArrayList<Object> result = new ArrayList<>();
         final ArrayList<Integer> subset = new ArrayList<>();
-        result.add(BruteForce(seq, seq.length - 1, target, subset));
+        result.add(BruteForce(seq.length, seq, target, subset));
         result.add(subset);
         return result;
     }
 
-    private static boolean BruteForce(int[] s, int n, int t,
-                                      ArrayList<Integer> ss) {
-        //Our base cases
-        //Returns true if target is equal to 0
-        if (t == 0) {
-            return true;
+    private static boolean BruteForce(int n, int[] s, int t,
+                                   ArrayList<Integer> ss) {
+        boolean found = false;
+        double max = Math.pow(2, n);
+        for (int i = 0; i < max; i++) {
+            int[] choice = new int[n];
+            String bin = Integer.toBinaryString(i);
+            int l = bin.length() - 1;
+            for (int j = 0; j < n; j++) {
+                if (l < 0) choice[j] = 0;
+                else choice[j] = Character.getNumericValue(bin.charAt(l--));
+            }
+            int sum = 0;
+            for (int k = 0; k < n; k++) {
+                sum += choice[k] * s[k];
+            }
+            if (sum == t) {
+                found = true;
+                for (int j = 0; j < choice.length; j++) {
+                    if (choice[j] == 1) {
+                        ss.add(s[j]);
+                    }
+                }
+                break;
+            }
         }
-        //Returns true if n is equal to 0
-        if (n == 0) {
-            return false;
-        }
-        //Determining if our last element is greater than our target
-        //and if so ignoring it
-        if (s[n - 1] > t) {
-            return BruteForce(s, n - 1, t, ss);
-        }
-        //Else check if target can be obtained by
-        //Including last element
-        //Excluding last element
-        return BruteForce(s, n - 1, t, ss) ||
-                BruteForce(s, n - 1, t - s[n - 1], ss);
+        return found;
     }
+
+//    private static boolean BruteForce(int[] s, int n, int t,
+//                                      ArrayList<Integer> ss) {
+//        //Our base cases
+//        //Returns true if target is equal to 0
+//        if (t == 0) {
+//            if (n >= 0 && n < s.length) {
+//                ss.add(s[n]);
+//            }
+//            return true;
+//        }
+//        //Returns true if n is equal to 0
+//        if (n == 0) {
+//            return false;
+//        }
+//        //Determining if our last element is greater than our target
+//        //and if so ignoring it
+//        if (s[n - 1] > t) {
+//            return BruteForce(s, n - 1, t, ss);
+//        }
+//        //Else check if target can be obtained by
+//        //Including last element
+//        //Excluding last element
+//        return BruteForce(s, n - 1, t, ss) ||
+//                BruteForce(s, n - 1, t - s[n - 1], ss);
+//    }
+
+//    private static boolean BruteForce(ArrayList<Integer> arr, int sum, int ori,
+//                                      ArrayList<Integer> res) {
+//        Integer i = null;
+//        if (!arr.isEmpty()) i = arr.get(0);
+//        if (sum == 0) return true;
+//        if (sum < 0) return false;
+//        if (arr.isEmpty() && sum != 0) return false;
+//
+//        if (i != null) {
+//            i = arr.remove(0);
+//            res.add(i);
+//        }
+//        boolean select = BruteForce(arr, sum - i, ori, res);
+//        if (!select) {
+//            res.remove(res.size() - 1);
+////            arr.add(i);
+//        }
+//        boolean reject = BruteForce(arr, sum, ori, res);
+//        return select || reject;
+//    }
 
     public static ArrayList<Object> dynamicProgramming(final int[] theS,
                                                        final int theT) {
@@ -184,7 +237,7 @@ public class tcss343 {
                               final Boolean theV) {
         // Create array of bounded random numbers, no repeats
         final Random r = new Random();
-        /*final*/ int[] s = new int[theN];
+        final int[] s = new int[theN];
 
         final Set<Integer> d = new LinkedHashSet<>();
         while (d.size() < theN) d.add(r.nextInt(theR) + 1); // prevent dupes
@@ -201,8 +254,11 @@ public class tcss343 {
                 t += subS.remove(r.nextInt(subS.size()));
         } else t = Arrays.stream(s).sum() + 1;
 
-//        s = new int[]{9, 3, 6, 2, 5};
-//        t = 25;
+//        s = new int[]{3,4,5,2};
+//        t = 9;
+
+//        s = new int[]{5, 4, 1, 3, 2};
+//        t = 14;
 
         System.out.println("Set: " + Arrays.toString(s) + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
 
