@@ -187,12 +187,18 @@ public class tcss343 {
         return weight;
     }
 
+    /**
+     * a method that tests each algorithm with random input
+     * @param theN n random elements
+     * @param theR the elements are in range from 1 to r
+     * @param theV if the target sum will be met
+     */
     public static void Driver(final int theN, final int theR,
                               final Boolean theV) {
         // Create array of bounded random numbers
         final ArrayList<Integer> s = new ArrayList<>();
         final Random r = new Random();
-        for (int i = 0; i < theN; i++) s.add(r.nextInt(theR) + 1);
+        for (int i = 0; i < theN; i++) s.add(r.nextInt(theR) + 1); //adding n random elements to s within the range of 1 to r
 
         // Given true, t is sum of random subset of S
         // Given false, t is greater than sum of set of S
@@ -207,11 +213,30 @@ public class tcss343 {
 
         final int[] s2 =  s.stream().mapToInt(Integer::intValue).toArray();
 
-        System.out.println("Set: " + s);
-        System.out.println("Target: " + t);
-        System.out.println(BruteForce(s2, t));
+        System.out.println("Set: " + s + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
+
+        /*System.out.println(BruteForce(s2, t));
         System.out.println(dynamicProgramming(s2, t));
-        System.out.println(CleverAlgorithm(s2, t));
+        System.out.println(CleverAlgorithm(s2, t));*/
+
+        long start = System.currentTimeMillis();
+        boolean bruteForce = BruteForce(s2, t);
+        long end = System.currentTimeMillis();
+        System.out.println(bruteForce);
+        System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
+
+        long start2 = System.currentTimeMillis();
+        ArrayList<Object> dynamicProgramming = dynamicProgramming(s2, t);
+        long end2 = System.currentTimeMillis();
+        System.out.println(dynamicProgramming);
+        System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
+
+        long start3 = System.currentTimeMillis();
+        ArrayList<Object> cleverAlgorithm = CleverAlgorithm(s2, t);
+        long end3 = System.currentTimeMillis();
+        System.out.println(cleverAlgorithm);
+        System.out.print("Execution time in milliseconds: ");System.out.println(end3-start3);
+
         System.out.println();
     }
 }
