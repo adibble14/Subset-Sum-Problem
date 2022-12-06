@@ -9,12 +9,14 @@ public class tcss343 {
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
         ArrayList<Object> result = new ArrayList<>();
-        result.add(0, BruteForce(seq, seq.length, target, result));
+        ArrayList<Integer> subset = new ArrayList<>();
+        result.add(0, BruteForce(seq, seq.length, target, subset));
+        result.add(subset);
         return result;
     }
 
     private static boolean BruteForce(int[] seq, int n, int sum,
-                                      ArrayList<Object> r) {
+                                      ArrayList<Integer> s) {
         //Our base cases
         //Returns true if sum is equal to 0
         if (sum == 0) {
@@ -27,13 +29,13 @@ public class tcss343 {
         //Determining if our last element is greater than our sum
         //and if so ignoring it
         if (seq[n - 1] > sum) {
-            return BruteForce(seq, n - 1, sum, r);
+            return BruteForce(seq, n - 1, sum, s);
         }
         //Else check if sum can be obtained by
         //Including last element
         //Excluding last element
-        return BruteForce(seq, n - 1, sum, r) ||
-                BruteForce(seq, n - 1, sum - seq[n - 1], r);
+        return BruteForce(seq, n - 1, sum, s) ||
+                BruteForce(seq, n - 1, sum - seq[n - 1], s);
     }
 
     public static ArrayList<Object> dynamicProgramming(final int[] theS,
