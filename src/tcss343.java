@@ -201,25 +201,29 @@ public class tcss343 {
                 t += subS.remove(r.nextInt(subS.size()));
         } else t = Arrays.stream(s).sum() + 1;
 
-        System.out.println("Set: " + Arrays.toString(s) + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
+        System.out.println("Set: " + Arrays.toString(s) + "  Target (t): " + t + "  Number of Elements (n): " + theN + "  Range of Values: 1-"+theR);System.out.println();
 
+        char theta = '\u0398';
         long start = System.currentTimeMillis();
         ArrayList<Object> bruteForce = BruteForce(s, t);
         long end = System.currentTimeMillis();
-        System.out.println(bruteForce);
-        System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
+        System.out.println("Brute Force:");System.out.println(bruteForce);
+        System.out.print("Execution time in milliseconds: ");System.out.print(end-start + ",");
+        System.out.println("  Table space: " + theta+"(n)");System.out.println();
 
         long start2 = System.currentTimeMillis();
         ArrayList<Object> dynamicProgramming = dynamicProgramming(s, t);
         long end2 = System.currentTimeMillis();
-        System.out.println(dynamicProgramming);
-        System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
+        System.out.println("Dynamic Programming:");System.out.println(dynamicProgramming);
+        System.out.print("Execution time in milliseconds: ");System.out.print(end2-start2 + ",");
+        System.out.println("  Table space: " + theta+"(n*(t+2))");System.out.println();
 
         long start3 = System.currentTimeMillis();
         ArrayList<Object> cleverAlgorithm = CleverAlgorithm(s, t);
         long end3 = System.currentTimeMillis();
-        System.out.println(cleverAlgorithm);
-        System.out.print("Execution time in milliseconds: ");System.out.println(end3-start3);
+        System.out.println("Clever Algorithm:");System.out.println(cleverAlgorithm);
+        System.out.print("Execution time in milliseconds: ");System.out.print(end3-start3 + ",");
+        System.out.println("  Table space: " + theta+"(2^(n+1))");System.out.println();
 
         System.out.println();
     }
