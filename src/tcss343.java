@@ -51,7 +51,7 @@ public class tcss343 {
         // Recover subset
         final ArrayList<Object> result = new ArrayList<>();
         int i = a.length - 1;
-        if (theT > 0 && a[i][a[i].length - 1]) {
+        if (/*theT > 0 && */a[i][a[i].length - 1]) {
             final ArrayList<Integer> subset = new ArrayList<>();
             result.add(true);
             int curr;
@@ -231,7 +231,7 @@ public class tcss343 {
         long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(bruteForce);
 //        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
-//        System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
+        System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
 
         runtime.gc();
 
@@ -242,7 +242,7 @@ public class tcss343 {
         usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(dynamicProgramming);
 //        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
-//        System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
+        System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
 
         runtime.gc();
 
@@ -253,7 +253,7 @@ public class tcss343 {
         usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(cleverAlgorithm);
 //        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
-//        System.out.print("Execution time in milliseconds: ");System.out.println(end3-start3);
+        System.out.print("Execution time in milliseconds: ");System.out.println(end3-start3);
 
         System.out.println();
     }
