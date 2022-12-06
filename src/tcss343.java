@@ -2,8 +2,9 @@ import java.util.*;
 
 public class tcss343 {
     public static void main(String[] args) {
-        Driver(5, 5, true);
-        Driver(5, 5, false);
+        Driver(30, 30, false);
+        Driver(30, 30, true);
+        Driver(30, 30, true);
     }
 
     public static boolean BruteForce(int[] seq, int target) {
@@ -31,8 +32,8 @@ public class tcss343 {
         return BruteForce(seq, n - 1, sum) || BruteForce(seq, n - 1, sum - seq[n - 1]);
     }
 
-    public static ArrayList<Object> dynamicProgramming(
-            final int[] theS, final int theT) {
+    public static ArrayList<Object> dynamicProgramming(final int[] theS,
+                                                       final int theT) {
         final boolean[][] a = new boolean[theS.length][theT + 1];
         // first column
         for (int i = 0; i < a.length; i++) a[i][0] = true;
@@ -47,7 +48,6 @@ public class tcss343 {
                 else a[i][j] = a[prevRow][j] || a[prevRow][j - sI];
             }
         }
-
         // Recover subset
         final ArrayList<Object> result = new ArrayList<>();
         int i = a.length - 1;
@@ -79,7 +79,6 @@ public class tcss343 {
      */
     public static ArrayList<Object> CleverAlgorithm(int[] theArray,
                                                     int theTarget) {
-
         ArrayList<Object> result = new ArrayList<>();
         //output for the empty subset
         if (theTarget == 0) {
@@ -145,9 +144,9 @@ public class tcss343 {
      * or returns "TRUE" and the subset if a solution has been found
      */
     //used https://www.geeksforgeeks.org/power-set/ for the algorithm
-    public static ArrayList<Object[]> findAllSubsets(int[] theArray, int theTarget) {
-
-        int numSubsets = (int) Math.pow(2, theArray.length) - 1;
+    public static ArrayList<Object[]> findAllSubsets(int[] theArray,
+                                                     int theTarget) {
+        double numSubsets = Math.pow(2, theArray.length) - 1;
         ArrayList<Integer> temp = new ArrayList<>(); //temporary list
         ArrayList<Object[]> subsets = new ArrayList<>(); //list that contains all the subsets that do not exceed theTarget
 
@@ -161,8 +160,7 @@ public class tcss343 {
             }
             if (total == theTarget) {   //if a correct subset has been found
                 subsets.clear();
-                Object[] found = {"TRUE"};
-                subsets.add(found);
+                subsets.add(new Object[]{"TRUE"});
                 subsets.add(temp.toArray());
                 return subsets;
             } else if (total <= theTarget) {
@@ -196,41 +194,54 @@ public class tcss343 {
     public static void Driver(final int theN, final int theR,
                               final Boolean theV) {
         // Create array of bounded random numbers
-        final ArrayList<Integer> s = new ArrayList<>();
         final Random r = new Random();
-        for (int i = 0; i < theN; i++) s.add(r.nextInt(theR) + 1); //adding n random elements to s within the range of 1 to r
+        final int[] s = new int[theN];
+        for (int i = 0; i < s.length; i++) s[i] = r.nextInt(theR) + 1; //adding n random elements to s within the range of 1 to r
 
         // Given true, t is sum of random subset of S
         // Given false, t is greater than sum of set of S
         int t = 0;
         if (theV) {
-            final List<Integer> subS = (List<Integer>) s.clone();
-            final int subSize = r.nextInt(s.size() + 1);
+            final ArrayList<Integer> subS = new ArrayList<>();
+            for (int i : s) subS.add(i);
+            final int subSize = r.nextInt(s.length + 1);
             for (int i = 0; i < subSize; i++)
                 t += subS.remove(r.nextInt(subS.size()));
-        }
-        else t = s.stream().mapToInt(i -> i).sum() + 1;
+        } else t = Arrays.stream(s).sum() + 1;
 
-        final int[] s2 =  s.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("Set: " + Arrays.toString(s) + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
 
-        System.out.println("Set: " + s + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
+        Runtime runtime = Runtime.getRuntime();
 
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         long start = System.currentTimeMillis();
-        boolean bruteForce = BruteForce(s2, t);
+        boolean bruteForce = BruteForce(s, t);
         long end = System.currentTimeMillis();
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(bruteForce);
+        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
         System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
 
+        runtime.gc();
+
+        usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         long start2 = System.currentTimeMillis();
-        ArrayList<Object> dynamicProgramming = dynamicProgramming(s2, t);
+        ArrayList<Object> dynamicProgramming = dynamicProgramming(s, t);
         long end2 = System.currentTimeMillis();
+        usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(dynamicProgramming);
+        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
         System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
 
+        runtime.gc();
+
+        usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         long start3 = System.currentTimeMillis();
-        ArrayList<Object> cleverAlgorithm = CleverAlgorithm(s2, t);
+        ArrayList<Object> cleverAlgorithm = CleverAlgorithm(s, t);
         long end3 = System.currentTimeMillis();
+        usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         System.out.println(cleverAlgorithm);
+        System.out.println("Used memory in bytes: " + (usedMemoryAfter-usedMemoryBefore));
         System.out.print("Execution time in milliseconds: ");System.out.println(end3-start3);
 
         System.out.println();
