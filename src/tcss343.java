@@ -201,6 +201,9 @@ public class tcss343 {
                 t += subS.remove(r.nextInt(subS.size()));
         } else t = Arrays.stream(s).sum() + 1;
 
+        Arrays.sort(s);
+
+        //output
         System.out.println("Set: " + Arrays.toString(s) + "  Target (t): " + t + "  Number of Elements (n): " + theN + "  Range of Values: 1-"+theR);System.out.println();
 
         char theta = '\u0398';
