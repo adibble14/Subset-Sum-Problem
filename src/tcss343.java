@@ -98,6 +98,10 @@ public class tcss343 {
         //if there are at least one possible subset in each table
         if (!tableT.isEmpty() && !tableW.isEmpty()) {
 
+//            List<ArrayList<Integer>> t = new ArrayList<>(tableT.stream().map(object -> (ArrayList<Integer>) object).toList());
+//
+//            List<ArrayList<Integer>> w = new ArrayList<>(tableW.stream().map(object -> (ArrayList<Integer>) object).toList());
+
             //sorting the subsets of tableW by weight in ascending order
             tableW.sort(Comparator.comparingInt(tcss343::getWeight));
 
@@ -117,6 +121,25 @@ public class tcss343 {
                     }
                 }
             }
+//            //sorting the subsets of tableW by weight in ascending order
+//            w.sort(Comparator.comparingInt(tcss343::getWeight));
+//
+//            //for each entry in tableT, see if a subset in W combined with the subset in T equals the target, if not there is no solution
+//            for (ArrayList<Integer> subsetT : t) {
+//                int weightT = getWeight(subsetT);
+//                for (ArrayList<Integer> subsetW : w) {
+//                    int weightW = getWeight(subsetW);
+//                    if (weightT + weightW == theTarget) {
+//                        ArrayList<Integer> combinedSubset = new ArrayList<>(subsetT);
+//                        combinedSubset.addAll(subsetW);
+//                        result.add(true);
+//                        result.add(combinedSubset);
+//                        return result;
+//                    } else if (weightT + weightW > theTarget) {
+//                        break;
+//                    }
+//                }
+//            }
         }
 
         if (theTarget == 0) result.add(true);
@@ -162,9 +185,10 @@ public class tcss343 {
     /**
      * returns the weight of the sublist given
      */
-    public static int getWeight(Object theSubset) {
+    public static int getWeight(Object /*ArrayList<Integer>*/ theSubset) {
         ArrayList<Integer> subset = (ArrayList<Integer>) theSubset;
         return subset.stream().mapToInt(i -> i).sum();
+//        return theSubset.stream().mapToInt(i -> i).sum();
     }
 
     /**
