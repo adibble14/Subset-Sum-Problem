@@ -3,8 +3,8 @@ import java.util.*;
 public class tcss343 {
     public static void main(String[] args) {
         // Warning: r >= n only else infinite
-        Driver(5, 15, true);
-        Driver(5, 15, false);
+        Driver(25, 1000, true);
+        //Driver(5, 1000, false);
     }
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
@@ -19,7 +19,7 @@ public class tcss343 {
      * iteratively brute force find the first possible solution to subset sum
      * https://people.sc.fsu.edu/~jburkardt/cpp_src/subset_sum_brute/subset_sum_brute.cpp
      *
-     * @author John Burkardt (originally)
+     * @author (original) John Burkardt
      * @param n the number of elements
      * @param s the sequence
      * @param t the target sum
@@ -220,7 +220,7 @@ public class tcss343 {
         long end = System.currentTimeMillis();
         System.out.println("Brute Force:");System.out.println(bruteForce);
         System.out.print("Execution time in milliseconds: ");System.out.print(end-start + ",");
-        System.out.println("  Table space: " + theta+"(n)");System.out.println();
+        System.out.println("  Table space: " + theta+"(n(2^n))");System.out.println();
 
         long start2 = System.currentTimeMillis();
         ArrayList<Object> dynamicProgramming = dynamicProgramming(s, t);
