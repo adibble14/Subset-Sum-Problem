@@ -208,7 +208,7 @@ public class tcss343 {
         long end = System.currentTimeMillis();
         System.out.println("Brute Force:");System.out.println(bruteForce);
         System.out.print("Execution time in milliseconds: ");System.out.print(end-start + ",");
-        System.out.println("  Table space: " + theta+"(n(2^n))");System.out.println();
+        System.out.println("  Table space: " + theta+"(n)");System.out.println();
 
         long start2 = System.currentTimeMillis();
         ArrayList<Object> dynamicProgramming = DynamicProgramming(s, t);
