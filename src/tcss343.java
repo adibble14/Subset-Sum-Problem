@@ -8,34 +8,42 @@ public class tcss343 {
     }
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
-        ArrayList<Object> result = new ArrayList<>();
-        ArrayList<Integer> subset = new ArrayList<>();
-        result.add(0, BruteForce(seq, seq.length, target, subset));
+        final ArrayList<Object> result = new ArrayList<>();
+        final ArrayList<Integer> subset = new ArrayList<>();
+        result.add(BruteForce(seq.length, seq, target, subset));
         result.add(subset);
         return result;
     }
 
-    private static boolean BruteForce(int[] seq, int n, int sum,
-                                      ArrayList<Integer> s) {
-        //Our base cases
-        //Returns true if sum is equal to 0
-        if (sum == 0) {
-            return true;
+    /**
+     * iteratively brute force find the first possible solution to subset sum
+     * @param n the number of elements
+     * @param s the sequence
+     * @param t the target sum
+     * @param ss the subset if found
+     * @return boolean representing whether subset was found or not
+     */
+    private static boolean BruteForce(int n, int[] s, int t,
+                                      ArrayList<Integer> ss) {
+        boolean found = false;
+        double max = Math.pow(2, n);
+        for (int i = 0; i < max; i++) {
+            int[] choice = new int[n];
+            String bin = Integer.toBinaryString(i);
+            int l = bin.length() - 1;
+            for (int j = 0; j < n; j++) {
+                if (l < 0) choice[j] = 0;
+                else choice[j] = Character.getNumericValue(bin.charAt(l--));
+            }
+            int sum = 0;
+            for (int k = 0; k < n; k++) sum += choice[k] * s[k];
+            if (sum == t) {
+                found = true;
+                for (int j = 0; j < choice.length; j++) if (choice[j] == 1) ss.add(s[j]);
+                break;
+            }
         }
-        //Returns true if n is equal to 0
-        if (n == 0) {
-            return false;
-        }
-        //Determining if our last element is greater than our sum
-        //and if so ignoring it
-        if (seq[n - 1] > sum) {
-            return BruteForce(seq, n - 1, sum, s);
-        }
-        //Else check if sum can be obtained by
-        //Including last element
-        //Excluding last element
-        return BruteForce(seq, n - 1, sum, s) ||
-                BruteForce(seq, n - 1, sum - seq[n - 1], s);
+        return found;
     }
 
     public static ArrayList<Object> dynamicProgramming(final int[] theS,
@@ -57,7 +65,7 @@ public class tcss343 {
         // Recover subset
         final ArrayList<Object> result = new ArrayList<>();
         int i = a.length - 1;
-        if (/*theT > 0 && */a[i][a[i].length - 1]) {
+        if (a[i][a[i].length - 1]) {
             final ArrayList<Integer> subset = new ArrayList<>();
             result.add(true);
             int curr;
@@ -83,7 +91,7 @@ public class tcss343 {
 
     /**
      * A clever algorithm for solving the Subset Sum Problem
-     //     * @param theArray the array of integers in the list
+     * @param theArray the array of integers in the list
      * @param theTarget the target number used for the sum
      * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
      * and the subset that adds up to the target (the empty set if False)
@@ -194,14 +202,11 @@ public class tcss343 {
         // Given false, t is greater than sum of set of S
         int t = 0;
         if (theV) {
-            final ArrayList<Integer> subS = new ArrayList<>();
-            for (int i : s) subS.add(i);
+            final ArrayList<Integer> subS = new ArrayList<>(d);
             final int subSize = r.nextInt(s.length + 1);
             for (int i = 0; i < subSize; i++)
                 t += subS.remove(r.nextInt(subS.size()));
         } else t = Arrays.stream(s).sum() + 1;
-
-        Arrays.sort(s);
 
         //output
         System.out.println("Set: " + Arrays.toString(s) + "  Target (t): " + t + "  Number of Elements (n): " + theN + "  Range of Values: 1-"+theR);System.out.println();
