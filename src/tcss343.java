@@ -7,46 +7,47 @@ public class tcss343 {
         Driver(25, 1000, false);
     }
 
-    public static ArrayList<Object> BruteForce(int[] seq, int target) {
-        final ArrayList<Object> result = new ArrayList<>();
-        final ArrayList<Integer> subset = new ArrayList<>();
-        result.add(BruteForce(seq.length, seq, target, subset));
-        result.add(subset);
-        return result;
-    }
-
     /**
      * iteratively brute force find the first possible solution to subset sum
      *
      * @author (original) John Burkardt
-     * @param n the number of elements
-     * @param s the sequence
-     * @param t the target sum
-     * @param ss the subset if found
-     * @return boolean representing whether subset was found or not
+     * @param s the array of integers in the list
+     * @param t the target number used for the sum
+     * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
+     * and the subset that adds up to the target (the empty set if False)
      */
     // https://people.sc.fsu.edu/~jburkardt/cpp_src/subset_sum_brute/subset_sum_brute.cpp
-    private static boolean BruteForce(int n, int[] s, int t,
-                                      ArrayList<Integer> ss) {
-        boolean found = false;
-        final double max = Math.pow(2, n);
+    public static ArrayList<Object> BruteForce(int[] s, int t) {
+        final ArrayList<Object> result = new ArrayList<>();
+        final ArrayList<Integer> subset = new ArrayList<>();
+        result.add(false);
+        result.add(subset);
+        final double max = Math.pow(2, s.length);
         for (int i = 0; i < max; i++) {
             final String bin = Integer.toBinaryString(i);
             int l = bin.length() - 1, sum = 0;
-            for (int j = 0; j < n && l >= 0; j++, l--) {
+            for (int j = 0; j < s.length && l >= 0; j++, l--) {
                 if (Character.getNumericValue(bin.charAt(l)) == 1) {
                     sum += s[j];
-                    ss.add(s[j]);
+                    subset.add(s[j]);
                 }
             }
             if (sum == t) {
-                found = true;
+                result.set(0, true);
                 break;
-            } else ss.clear();
+            } else subset.clear();
         }
-        return found;
+        return result;
     }
 
+    /**
+     * find the solution to subset sum via dynamic programming
+     *
+     * @param theS the array of integers in the list
+     * @param theT the target number used for the sum
+     * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
+     * and the subset that adds up to the target (the empty set if False)
+     */
     public static ArrayList<Object> DynamicProgramming(final int[] theS,
                                                        final int theT) {
         final ArrayList<Object> result = new ArrayList<>();
