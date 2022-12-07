@@ -17,6 +17,9 @@ public class tcss343 {
 
     /**
      * iteratively brute force find the first possible solution to subset sum
+     * https://people.sc.fsu.edu/~jburkardt/cpp_src/subset_sum_brute/subset_sum_brute.cpp
+     *
+     * @author John Burkardt (originally)
      * @param n the number of elements
      * @param s the sequence
      * @param t the target sum
