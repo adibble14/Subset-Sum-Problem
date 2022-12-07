@@ -4,7 +4,7 @@ public class tcss343 {
     public static void main(String[] args) {
         // Warning: r >= n only else infinite
         Driver(25, 1000, true);
-        //Driver(5, 1000, false);
+        Driver(25, 1000, false);
     }
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
@@ -17,7 +17,6 @@ public class tcss343 {
 
     /**
      * iteratively brute force find the first possible solution to subset sum
-     * https://people.sc.fsu.edu/~jburkardt/cpp_src/subset_sum_brute/subset_sum_brute.cpp
      *
      * @author (original) John Burkardt
      * @param n the number of elements
@@ -26,69 +25,58 @@ public class tcss343 {
      * @param ss the subset if found
      * @return boolean representing whether subset was found or not
      */
+    // https://people.sc.fsu.edu/~jburkardt/cpp_src/subset_sum_brute/subset_sum_brute.cpp
     private static boolean BruteForce(int n, int[] s, int t,
                                       ArrayList<Integer> ss) {
         boolean found = false;
-        double max = Math.pow(2, n);
+        final double max = Math.pow(2, n);
         for (int i = 0; i < max; i++) {
-            int[] choice = new int[n];
-            String bin = Integer.toBinaryString(i);
-            int l = bin.length() - 1;
-            for (int j = 0; j < n; j++) {
-                if (l < 0) choice[j] = 0;
-                else choice[j] = Character.getNumericValue(bin.charAt(l--));
+            final String bin = Integer.toBinaryString(i);
+            int l = bin.length() - 1, sum = 0;
+            for (int j = 0; j < n && l >= 0; j++, l--) {
+                if (Character.getNumericValue(bin.charAt(l)) == 1) {
+                    sum += s[j];
+                    ss.add(s[j]);
+                }
             }
-            int sum = 0;
-            for (int k = 0; k < n; k++) sum += choice[k] * s[k];
             if (sum == t) {
                 found = true;
-                for (int j = 0; j < choice.length; j++) if (choice[j] == 1) ss.add(s[j]);
                 break;
-            }
+            } else ss.clear();
         }
         return found;
     }
 
-    public static ArrayList<Object> dynamicProgramming(final int[] theS,
+    public static ArrayList<Object> DynamicProgramming(final int[] theS,
                                                        final int theT) {
+        final ArrayList<Object> result = new ArrayList<>();
+        final ArrayList<Integer> subset = new ArrayList<>();
+        result.add(false);
+        result.add(subset);
         final boolean[][] a = new boolean[theS.length][theT + 1];
-        // first column
-        for (int i = 0; i < a.length; i++) a[i][0] = true;
-        // first row
-        for (int j = 1; j < a[0].length; j++) a[0][j] = theS[0] == j;
-        // rest of rows and columns
-        for (int i = 1; i < a.length; i++) {
+        for (int i = 0; i < a.length; i++) a[i][0] = true; // first column
+        for (int j = 1; j < a[0].length; j++) a[0][j] = theS[0] == j; // first row
+        for (int i = 1; i < a.length; i++) { // rest of rows and columns
             for (int j = 1; j < a[i].length; j++) {
-                final int sI = theS[i];
                 final int prevRow = i - 1;
-                if (j < sI) a[i][j] = a[prevRow][j];
-                else a[i][j] = a[prevRow][j] || a[prevRow][j - sI];
+                if (j < theS[i]) a[i][j] = a[prevRow][j];
+                else a[i][j] = a[prevRow][j] || a[prevRow][j - theS[i]];
             }
         }
         // Recover subset
-        final ArrayList<Object> result = new ArrayList<>();
         int i = a.length - 1;
         if (a[i][a[i].length - 1]) {
-            final ArrayList<Integer> subset = new ArrayList<>();
-            result.add(true);
-            int curr;
-            int t = theT;
+            result.set(0, true);
+            int curr, t = theT;
             while (t > 0) {
                 curr = theS[i--];
-                int bound = t - curr;
+                final int bound = t - curr;
                 if (bound == 0 || (bound > 0 && a[i][bound])) {
                     subset.add(curr);
                     t -= curr;
                 }
             }
-            result.add(subset);
-        } else if (theT == 0) {
-            result.add(true);
-            result.add(new ArrayList<Integer>());
-        } else {
-            result.add(false);
-            result.add(new ArrayList<Integer>());
-        }
+        } else if (theT == 0) result.set(0, true);
         return result;
     }
 
@@ -147,7 +135,7 @@ public class tcss343 {
      * returns all subsets of theArray that do not exceed theTarget number
      * or returns "TRUE" and the subset if a solution has been found
      */
-    //used https://www.geeksforgeeks.org/power-set/ for the algorithm
+    // used https://www.geeksforgeeks.org/power-set/ for the algorithm
     public static ArrayList<Object> findAllSubsets(int[] theArray,
                                                    int theTarget) {
         double numSubsets = Math.pow(2, theArray.length) - 1;
@@ -214,7 +202,7 @@ public class tcss343 {
         //output
         System.out.println("Set: " + Arrays.toString(s) + "  Target (t): " + t + "  Number of Elements (n): " + theN + "  Range of Values: 1-"+theR);System.out.println();
 
-        char theta = '\u0398';
+        char theta = 'Θ';
         long start = System.currentTimeMillis();
         ArrayList<Object> bruteForce = BruteForce(s, t);
         long end = System.currentTimeMillis();
@@ -223,7 +211,7 @@ public class tcss343 {
         System.out.println("  Table space: " + theta+"(n(2^n))");System.out.println();
 
         long start2 = System.currentTimeMillis();
-        ArrayList<Object> dynamicProgramming = dynamicProgramming(s, t);
+        ArrayList<Object> dynamicProgramming = DynamicProgramming(s, t);
         long end2 = System.currentTimeMillis();
         System.out.println("Dynamic Programming:");System.out.println(dynamicProgramming);
         System.out.print("Execution time in milliseconds: ");System.out.print(end2-start2 + ",");
