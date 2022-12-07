@@ -3,8 +3,8 @@ import java.util.*;
 public class tcss343 {
     public static void main(String[] args) {
         // Warning: r >= n only else infinite
-        Driver(20, 30, true);
-        Driver(20, 30, false);
+        Driver(5, 15, true);
+        Driver(5, 15, false);
     }
 
     public static ArrayList<Object> BruteForce(int[] seq, int target) {
@@ -15,8 +15,19 @@ public class tcss343 {
         return result;
     }
 
+    /**
+     * iteratively brute force find the first possible solution to subset sum
+     * https://people.sc.fsu.edu/~jburkardt/cpp_src/subset_sum_brute/subset_sum_brute.cpp
+     *
+     * @author John Burkardt (originally)
+     * @param n the number of elements
+     * @param s the sequence
+     * @param t the target sum
+     * @param ss the subset if found
+     * @return boolean representing whether subset was found or not
+     */
     private static boolean BruteForce(int n, int[] s, int t,
-                                   ArrayList<Integer> ss) {
+                                      ArrayList<Integer> ss) {
         boolean found = false;
         double max = Math.pow(2, n);
         for (int i = 0; i < max; i++) {
@@ -38,54 +49,7 @@ public class tcss343 {
         return found;
     }
 
-//    private static boolean BruteForce(int[] s, int n, int t,
-//                                      ArrayList<Integer> ss) {
-//        //Our base cases
-//        //Returns true if target is equal to 0
-//        if (t == 0) {
-//            if (n >= 0 && n < s.length) {
-//                ss.add(s[n]);
-//            }
-//            return true;
-//        }
-//        //Returns true if n is equal to 0
-//        if (n == 0) {
-//            return false;
-//        }
-//        //Determining if our last element is greater than our target
-//        //and if so ignoring it
-//        if (s[n - 1] > t) {
-//            return BruteForce(s, n - 1, t, ss);
-//        }
-//        //Else check if target can be obtained by
-//        //Including last element
-//        //Excluding last element
-//        return BruteForce(s, n - 1, t, ss) ||
-//                BruteForce(s, n - 1, t - s[n - 1], ss);
-//    }
-
-//    private static boolean BruteForce(ArrayList<Integer> arr, int sum, int ori,
-//                                      ArrayList<Integer> res) {
-//        Integer i = null;
-//        if (!arr.isEmpty()) i = arr.get(0);
-//        if (sum == 0) return true;
-//        if (sum < 0) return false;
-//        if (arr.isEmpty() && sum != 0) return false;
-//
-//        if (i != null) {
-//            i = arr.remove(0);
-//            res.add(i);
-//        }
-//        boolean select = BruteForce(arr, sum - i, ori, res);
-//        if (!select) {
-//            res.remove(res.size() - 1);
-////            arr.add(i);
-//        }
-//        boolean reject = BruteForce(arr, sum, ori, res);
-//        return select || reject;
-//    }
-
-    public static ArrayList<Object> DynamicProgramming(final int[] theS,
+    public static ArrayList<Object> dynamicProgramming(final int[] theS,
                                                        final int theT) {
         final boolean[][] a = new boolean[theS.length][theT + 1];
         // first column
@@ -130,7 +94,7 @@ public class tcss343 {
 
     /**
      * A clever algorithm for solving the Subset Sum Problem
-     //     * @param theArray the array of integers in the list
+     * @param theArray the array of integers in the list
      * @param theTarget the target number used for the sum
      * @return an ArrayList of Object arrays containing if the solution has been found (True or False)
      * and the subset that adds up to the target (the empty set if False)
@@ -232,8 +196,7 @@ public class tcss343 {
         // Create array of bounded random numbers, no repeats
         final Random r = new Random();
         final int[] s = new int[theN];
-
-        final Set<Integer> d = new LinkedHashSet<>();
+        final Set<Integer> d = new HashSet<>();
         while (d.size() < theN) d.add(r.nextInt(theR) + 1); // prevent dupes
         int y = 0;
         for (Integer x : d) s[y++] = x;
@@ -248,28 +211,30 @@ public class tcss343 {
                 t += subS.remove(r.nextInt(subS.size()));
         } else t = Arrays.stream(s).sum() + 1;
 
-//        s = new int[]{3,4,5,2};
-//        t = 9;
+        //output
+        System.out.println("Set: " + Arrays.toString(s) + "  Target (t): " + t + "  Number of Elements (n): " + theN + "  Range of Values: 1-"+theR);System.out.println();
 
-        System.out.println("Set: " + Arrays.toString(s) + "  Target: " + t + "  Number of Elements: " + theN + "  Range of Values: 1-"+theR);
-
+        char theta = '\u0398';
         long start = System.currentTimeMillis();
         ArrayList<Object> bruteForce = BruteForce(s, t);
         long end = System.currentTimeMillis();
-        System.out.println(bruteForce);
-        System.out.print("Execution time in milliseconds: ");System.out.println(end-start);
+        System.out.println("Brute Force:");System.out.println(bruteForce);
+        System.out.print("Execution time in milliseconds: ");System.out.print(end-start + ",");
+        System.out.println("  Table space: " + theta+"(n)");System.out.println();
 
         long start2 = System.currentTimeMillis();
-        ArrayList<Object> dynamicProgramming = DynamicProgramming(s, t);
+        ArrayList<Object> dynamicProgramming = dynamicProgramming(s, t);
         long end2 = System.currentTimeMillis();
-        System.out.println(dynamicProgramming);
-        System.out.print("Execution time in milliseconds: ");System.out.println(end2-start2);
+        System.out.println("Dynamic Programming:");System.out.println(dynamicProgramming);
+        System.out.print("Execution time in milliseconds: ");System.out.print(end2-start2 + ",");
+        System.out.println("  Table space: " + theta+"(n*(t+2))");System.out.println();
 
         long start3 = System.currentTimeMillis();
         ArrayList<Object> cleverAlgorithm = CleverAlgorithm(s, t);
         long end3 = System.currentTimeMillis();
-        System.out.println(cleverAlgorithm);
-        System.out.print("Execution time in milliseconds: ");System.out.println(end3-start3);
+        System.out.println("Clever Algorithm:");System.out.println(cleverAlgorithm);
+        System.out.print("Execution time in milliseconds: ");System.out.print(end3-start3 + ",");
+        System.out.println("  Table space: " + theta+"(2^(n+1))");System.out.println();
 
         System.out.println();
     }
