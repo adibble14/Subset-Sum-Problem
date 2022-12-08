@@ -1,10 +1,16 @@
+/**
+ * TCSS 343 Homework #4 Subset Sum Problem
+ * Created by Andrew Dibble, Anthony Nguyen, Michael Doan
+ * Fall Quarter 2022
+ */
+
 import java.util.*;
 
 public class tcss343 {
     public static void main(String[] args) {
         // Warning: r >= n only else infinite
-        Driver(25, 1000, true);
-        Driver(25, 1000, false);
+        Driver(25, 1000000, true);
+        Driver(25, 1000000, false);
     }
 
     /**
